@@ -370,9 +370,9 @@
     quizOptions: $("#quizOptions"),
     progressTrack: $("#progressTrack"),
     offerBadge: $("#offerBadge"),
-    offerProtocolName: $("#offerProtocolName"),
     offerTitle: $("#offerTitle"),
-    offerLead: $("#offerLead"),
+    offerTags: $("#offerTags"),
+    offerInsights: $("#offerInsights"),
     offerDiag: $("#offerDiag"),
     offerWhy: $("#offerWhy"),
     offerCardKicker: $("#offerCardKicker"),
@@ -799,19 +799,23 @@
     return buildCourseIdentity(a, p).headline;
   }
 
-  /** Texto curto e fácil em cima do card */
-  function buildLead(p, a) {
+  /** Mini-cards do resumo (no lugar do parágrafo longo) */
+  function buildInsights(p, a) {
     const id = buildCourseIdentity(a || state.answers, p);
-    const quer = p.meta ? p.meta.desire : "fazer unha bonita";
-    const trava = p.desafio ? p.desafio.chip : "sua dificuldade";
+    const quer = p.meta ? p.meta.chip || p.meta.desire : id.goalVerb;
+    const trava = p.desafio ? p.desafio.chip : id.bridgeShort;
 
-    return (
-      `Você falou que quer <strong>${quer}</strong> ` +
-      `e que sua dificuldade hoje é <strong>${trava}</strong>. ` +
-      `Por isso o curso foi montado assim: te ensina <em>${id.bridgeShort}</em> ` +
-      `pra você conseguir <em>${id.goalVerb}</em>. ` +
-      `${id.linkLine.charAt(0).toUpperCase() + id.linkLine.slice(1)}.`
-    );
+    return [
+      { e: "🎯", k: "você quer", v: quer },
+      { e: "🔧", k: "a trava hoje", v: trava },
+      { e: "✨", k: "o curso foca em", v: id.bridgeShort },
+    ];
+  }
+
+  /** Chips curtos no lugar da linha uppercase densa */
+  function buildOfferTags(p, a) {
+    const id = buildCourseIdentity(a || state.answers, p);
+    return [id.bridgeShort, id.level, id.estilo].filter(Boolean);
   }
 
   /** Iniciante total? (não sabe nada / só esmalte / só viu no celular / do zero) */
@@ -1030,44 +1034,57 @@
     }));
   }
 
-  /** Por que foi feito pra você — frases curtas */
+  /** Por que foi feito pra você — frases curtas (legado) */
   function buildWhy(p, a) {
+    return buildWhyCards(p, a).map(
+      (item) => `<strong>${item.k}:</strong> ${item.v}`
+    );
+  }
+
+  /** Por que foi feito pra você — mini-cards fáceis de ler */
+  function buildWhyCards(p, a) {
     const id = buildCourseIdentity(a, p);
-    const lines = [];
+    const items = [];
 
     if (p.meta) {
-      lines.push(
-        `<strong>O que você quer:</strong> ${p.meta.desire}. O curso inteiro aponta pra isso.`
-      );
+      items.push({
+        k: "o que você quer",
+        v: `${p.meta.desire} — o curso inteiro aponta pra isso`,
+      });
     }
     if (p.desafio) {
-      lines.push(
-        `<strong>Sua dificuldade:</strong> ${p.desafio.chip}. Por isso tem parte especial de <em>${id.bridgeShort}</em>.`
-      );
+      items.push({
+        k: "sua dificuldade",
+        v: `${p.desafio.chip} · foco em ${id.bridgeShort}`,
+      });
     }
     if (p.tecnica) {
-      lines.push(
-        `<strong>Seu nível:</strong> ${p.tecnica.chip}. A gente não te joga no meio — começa do jeito que você está hoje.`
-      );
+      items.push({
+        k: "seu nível",
+        v: `${p.tecnica.chip} — começa do jeito que você está`,
+      });
     }
     if (p.equipamento) {
       if (a.equipamento === "nada" || a.equipamento === "basico") {
-        lines.push(
-          `<strong>Seu material:</strong> ${p.equipamento.chip}. Tem lista simples do que precisa, sem luxo.`
-        );
+        items.push({
+          k: "seu material",
+          v: `${p.equipamento.chip} · lista simples, sem luxo`,
+        });
       } else {
-        lines.push(
-          `<strong>Seu material:</strong> ${p.equipamento.chip}. A gente te ensina a usar o que você já tem.`
-        );
+        items.push({
+          k: "seu material",
+          v: `${p.equipamento.chip} · usa o que você já tem`,
+        });
       }
     }
     if (p.estilo) {
-      lines.push(
-        `<strong>Seu gosto:</strong> ${p.estilo.chip}. Os exemplos e o acabamento vão nesse estilo.`
-      );
+      items.push({
+        k: "seu gosto",
+        v: `${p.estilo.chip} — exemplos nesse estilo`,
+      });
     }
 
-    return lines;
+    return items;
   }
 
   /** Sempre sobe pro topo ao trocar de pergunta */
@@ -1415,13 +1432,34 @@
     const p = getPersona(a);
     const id = buildCourseIdentity(a, p);
 
-    // Badge + nome (simples, liderado pela META)
+    // Badge + título mais curto (sem parágrafo denso)
     els.offerBadge.textContent = `✨ feito pra quem quer ${id.goalVerb}`;
-    els.offerProtocolName.textContent = `${id.name} · ${id.subtitle}`;
+    els.offerTitle.textContent = `seu curso pra ${id.goalVerb}`;
 
-    // Title + lead
-    els.offerTitle.textContent = buildHeadline(p, a);
-    els.offerLead.innerHTML = buildLead(p, a);
+    // Chips em vez da linha uppercase longa
+    if (els.offerTags) {
+      const tags = buildOfferTags(p, a);
+      els.offerTags.innerHTML = tags
+        .map((t) => `<span class="offer-tag">${t}</span>`)
+        .join("");
+    }
+
+    // Mini-cards de resumo (fácil de escanear)
+    if (els.offerInsights) {
+      const insights = buildInsights(p, a);
+      els.offerInsights.innerHTML = insights
+        .map(
+          (item) => `
+        <div class="offer-insight">
+          <span class="offer-insight__emoji" aria-hidden="true">${item.e}</span>
+          <div>
+            <span class="offer-insight__k">${item.k}</span>
+            <span class="offer-insight__v">${item.v}</span>
+          </div>
+        </div>`
+        )
+        .join("");
+    }
 
     // Resumo das respostas (palavras fáceis)
     const diagItems = [
@@ -1454,12 +1492,20 @@
       </div>
     `;
 
-    // Why card
-    const whyLines = buildWhy(p, a);
+    // Why card em mini-cards (sem parede de texto)
+    const whyItems = buildWhyCards(p, a);
     els.offerWhy.innerHTML = `
       <div class="why-card__head">por que esse curso é o seu</div>
-      <div class="why-card__body">
-        ${whyLines.map((line) => `<p>${line}</p>`).join("")}
+      <div class="why-card__grid">
+        ${whyItems
+          .map(
+            (item) => `
+          <div class="why-card__item">
+            <span class="why-card__k">${item.k}</span>
+            <span class="why-card__v">${item.v}</span>
+          </div>`
+          )
+          .join("")}
       </div>
     `;
 

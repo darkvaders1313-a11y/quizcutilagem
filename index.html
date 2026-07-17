@@ -154,11 +154,13 @@
     <!-- ========== OFFER ========== -->
     <section class="screen" data-screen="offer" id="screen-offer">
       <div class="screen__inner offer">
-        <div class="offer__badge" id="offerBadge">✨ feito sob medida pra você</div>
-
-        <p class="offer__protocol-name" id="offerProtocolName"></p>
-        <h2 class="offer__title" id="offerTitle"></h2>
-        <p class="offer__lead" id="offerLead"></p>
+        <!-- Hero em card: título curto + chips + resumo em mini-cards -->
+        <div class="offer-hero" id="offerHero">
+          <div class="offer__badge" id="offerBadge">✨ feito sob medida pra você</div>
+          <h2 class="offer__title" id="offerTitle"></h2>
+          <div class="offer-tags" id="offerTags" aria-label="Foco do seu curso"></div>
+          <div class="offer-insights" id="offerInsights" aria-label="Resumo do seu curso"></div>
+        </div>
 
         <!-- Diagnóstico espelhando as respostas -->
         <div class="diag" id="offerDiag" aria-label="Seu diagnóstico"></div>
