@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1" />
+  <meta name="theme-color" content="#0A0A0A" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Cutilagem Russa — Seu protocolo personalizado</title>
+  <meta name="description" content="Responda algumas perguntas e receba o protocolo de cutilagem russa montado sob medida pro seu nível, técnica e objetivo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="app" id="app">
+
+    <!-- ========== INTRO ========== -->
+    <section class="screen screen--active" data-screen="intro" id="screen-intro">
+      <div class="screen__inner">
+        <div class="media-card media-card--intro" id="introMedia">
+          <video
+            class="media-card__video"
+            id="introVideo"
+            src="assets/intro-curso.mp4"
+            poster="assets/hero.jpg"
+            playsinline
+            webkit-playsinline
+            muted
+            autoplay
+            preload="auto"
+          ></video>
+          <button type="button" class="play-overlay play-overlay--pulse" id="introPlay" aria-label="Toque para ouvir">
+            <span class="play-overlay__btn" aria-hidden="true">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86a1 1 0 0 0-1.5.86z"/>
+              </svg>
+            </span>
+            <span class="play-overlay__label">Toque para ouvir</span>
+          </button>
+        </div>
+
+        <div class="intro-icon" aria-hidden="true">💅</div>
+
+        <h1 class="intro-title">
+          seu curso de unhas,<br />
+          montado <em>só pra você</em>
+        </h1>
+
+        <p class="intro-sub">
+          do zero ou já atendendo — 6 perguntas e a gente monta os módulos certos pro seu nível
+        </p>
+
+        <div class="intro-spacer"></div>
+
+        <button type="button" class="btn btn--primary" id="btnStart">
+          montar meu protocolo
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== QUIZ SHELL ========== -->
+    <section class="screen" data-screen="quiz" id="screen-quiz">
+      <header class="quiz-header">
+        <button type="button" class="back-btn" id="btnBack" aria-label="Voltar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
+        <div class="progress" id="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div class="progress__track" id="progressTrack">
+            <!-- segments injected by JS -->
+          </div>
+        </div>
+      </header>
+
+      <div class="quiz-media">
+        <div class="media-card media-card--sm" id="quizMedia">
+          <video
+            class="media-card__video"
+            id="quizVideo"
+            src="assets/quiz-momento.mp4"
+            poster="assets/hero.jpg"
+            playsinline
+            webkit-playsinline
+            muted
+            autoplay
+            preload="auto"
+          ></video>
+          <button type="button" class="play-overlay play-overlay--sm play-overlay--pulse" id="quizPlay" aria-label="Toque para ouvir">
+            <span class="play-overlay__btn" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86a1 1 0 0 0-1.5.86z"/>
+              </svg>
+            </span>
+            <span class="play-overlay__label">Toque para ouvir</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="quiz-body">
+        <p class="quiz-step-label" id="quizStepLabel"></p>
+        <h2 class="quiz-question" id="quizQuestion"></h2>
+        <p class="quiz-hint" id="quizHint" hidden></p>
+        <div class="options" id="quizOptions" role="listbox" aria-label="Opções"></div>
+      </div>
+
+      <div class="quiz-footer">
+        <button type="button" class="btn btn--primary" id="btnNext" disabled>
+          continuar
+        </button>
+      </div>
+    </section>
+
+    <!-- ========== LOADING / ASSEMBLY ========== -->
+    <section class="screen" data-screen="loading" id="screen-loading">
+      <div class="loading">
+        <div class="loading__eyebrow" id="loadingEyebrow">biblioteca ativa</div>
+        <h2 class="loading__title" id="loadingTitle">montando seu curso…</h2>
+        <p class="loading__story" id="loadingStory">
+          +100 cursos na biblioteca · montando o seu com base nas suas respostas
+        </p>
+
+        <!-- Big slow progress bar -->
+        <div class="build-bar" aria-hidden="true">
+          <div class="build-bar__meta">
+            <span class="build-bar__status" id="buildStatus">iniciando varredura…</span>
+            <span class="build-bar__pct" id="buildPct">0%</span>
+          </div>
+          <div class="build-bar__track">
+            <div class="build-bar__fill" id="buildFill"></div>
+            <div class="build-bar__glow" id="buildGlow"></div>
+          </div>
+          <div class="build-bar__hint" id="buildHint">isso pode levar alguns segundos — estamos montando de verdade</div>
+        </div>
+
+        <!-- Live assembly feed -->
+        <div class="build-feed" id="buildFeed" aria-live="polite">
+          <div class="build-feed__head">
+            <span class="build-feed__dot"></span>
+            varrendo a biblioteca
+          </div>
+          <ul class="build-feed__list" id="buildFeedList"></ul>
+        </div>
+
+        <!-- Selected modules stacking -->
+        <div class="build-stack" id="buildStack" hidden>
+          <div class="build-stack__head">módulos que vão entrar no seu curso</div>
+          <div class="build-stack__items" id="buildStackItems"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== OFFER ========== -->
+    <section class="screen" data-screen="offer" id="screen-offer">
+      <div class="screen__inner offer">
+        <div class="offer__badge" id="offerBadge">✨ feito sob medida pra você</div>
+
+        <p class="offer__protocol-name" id="offerProtocolName"></p>
+        <h2 class="offer__title" id="offerTitle"></h2>
+        <p class="offer__lead" id="offerLead"></p>
+
+        <!-- Diagnóstico espelhando as respostas -->
+        <div class="diag" id="offerDiag" aria-label="Seu diagnóstico"></div>
+
+        <!-- Por que faz sentido -->
+        <div class="why-card" id="offerWhy"></div>
+
+        <div class="results-row" id="resultsRow" aria-label="Resultados de alunas">
+          <img src="assets/r1-nude-glossy.jpg" alt="Resultado nude glossy" loading="lazy" data-style="glossy nude gel todos" />
+          <img src="assets/r2-natural-clean.jpg" alt="Resultado natural clean" loading="lazy" data-style="nude glossy cuticula todos" />
+          <img src="assets/r3-close-cuticle.jpg" alt="Close de cutícula" loading="lazy" data-style="cuticula nude french baby glossy gel todos" />
+          <img src="assets/r6-babyboomer.jpg" alt="Resultado baby boomer" loading="lazy" data-style="baby polygel todos" />
+          <img src="assets/r4-soft-french.jpg" alt="Francesa suave" loading="lazy" data-style="french polygel todos" />
+          <img src="assets/r5-full-hand.jpg" alt="Mão completa" loading="lazy" data-style="glossy nude baby french gel spa todos" />
+        </div>
+
+        <div class="offer__card">
+          <p class="offer__card-kicker" id="offerCardKicker">seu protocolo inclui</p>
+          <h3 class="offer__card-title" id="offerCardTitle">Método Cutícula Perfeita™</h3>
+          <ul class="offer__list" id="offerList"></ul>
+
+          <div class="offer__price">
+            <span class="offer__price-old">De R$197</span>
+            <span class="offer__price-new">R$9<span>,90</span></span>
+            <span class="offer__price-note">pagamento único · acesso vitalício</span>
+          </div>
+
+          <a
+            class="btn btn--primary btn--lg"
+            id="btnCheckout"
+            href="https://pay.hotmart.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            quero meu protocolo agora
+          </a>
+          <p class="offer__secure">🔒 compra segura · garantia incondicional de 7 dias</p>
+        </div>
+
+        <div class="offer__social">
+          <div class="offer__stars" aria-label="5 estrelas">★★★★★</div>
+          <p id="offerSocialProof">+5.000 alunas no mesmo caminho que o seu</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
